@@ -9,5 +9,5 @@ const connectDatabase = () => {
             console.log("Mongoose Connected");
         });
 }
- 
+  
 module.exports = connectDatabase; 
