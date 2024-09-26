@@ -46,7 +46,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Use CORS middleware
 app.use(cors({
-    origin: 'http://localhost:3000', // Replace with your frontend's URL
+    origin: ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
     credentials: true, // Allow credentials if needed
 }));
