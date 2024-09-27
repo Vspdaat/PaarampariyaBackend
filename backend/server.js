@@ -16,11 +16,8 @@ cloudinary.config({
 
 // deployment
 app.get('/', (req, res) => {
-        res.send('Server is Running! 🚀');
+        res.send('Server is Running');
 });
-
-
-
 
     app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)
