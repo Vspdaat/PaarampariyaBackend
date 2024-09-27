@@ -83,11 +83,12 @@ const order = require('./routes/orderRoute');
 const payment = require('./routes/paymentRoute');
 // app.js or your main server file
 const cartRoutes = require('./routes/cartRoutes');
-
+app.options('/api/v1', cors());
 app.use('/api/v1', cartRoutes);
 
 app.use('/api/v1', user);
 app.use('/api/v1', product);
+
 app.use('/api/v1', order);
 app.use('/api/v1', payment);
 
