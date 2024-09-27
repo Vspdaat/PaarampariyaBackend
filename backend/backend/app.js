@@ -48,20 +48,29 @@ if (process.env.NODE_ENV !== 'production') {
 const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
   
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// };
 
-app.options('*', cors(corsOptions)); // Handle preflight requests
+// app.options('*', cors(corsOptions)); // Handle preflight requests
 
+
+// const app = express();
+
+// Allow specific origin
+app.use(cors({
+  origin: 'https://paarampariyaadmin.web.app', // Replace with your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  
+}));
 
 app.use(express.json());
 app.use(cookieParser());
