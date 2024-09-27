@@ -49,7 +49,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Use CORS middleware
-const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
+const allowedOrigins = ['http://localhost:3000/', 'https://paarampariya-1.web.app/', 'https://paarampariyaadmin.web.app/'];
   
 
 const corsOptions = {
