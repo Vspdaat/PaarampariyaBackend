@@ -46,28 +46,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-
-
-// Use CORS middleware
-const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
-  
-
-const corsOptions = {
-    origin: function (origin, callback) {
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  };
-
-app.options('*', cors(corsOptions)); // Handle preflight requests
-
-
+app.use(cors());
 
 
 app.use(fileUpload());
