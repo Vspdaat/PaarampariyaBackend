@@ -57,13 +57,13 @@ const corsOptions = {
       if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
         callback(null, true);
       } else {
-        callback(null, false); // Respond but without CORS headers
+        callback(new Error('Not allowed by CORS'));
       }
     },
-    methods: ["POST", "GET", "OPTIONS", "PUT"],
+    methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
   };
-  
 
 app.options('*', cors(corsOptions)); // Handle preflight requests
 
