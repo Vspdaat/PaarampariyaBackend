@@ -52,12 +52,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
   
 
-app.use(cors({
-    origin: allowedOrigins,
-    methods: ["POST", "GET"],
-    credentials: true,
-  }));  
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ["POST", "GET", "OPTIONS"],
+  credentials: true,
+};
 
+app.use(cors(corsOptions));
 
 
 
