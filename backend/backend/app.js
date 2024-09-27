@@ -49,24 +49,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Use CORS middleware
-const corsOptions = {
-    origin: ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'], // Allowed domains
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Include OPTIONS in allowed methods
-    credentials: true, // Allow credentials
-    allowedHeaders: ['Content-Type', 'Authorization'], // Add allowed headers if necessary
-    preflightContinue: false, // Stop preflight after handling
-    optionsSuccessStatus: 204, // Some browsers choke on 204 status for preflight
-  };
+const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
   
-  app.use(cors(corsOptions));
-  
-  // Handle preflight requests manually (optional, usually handled by cors middleware)
-  app.options('*', cors(corsOptions)); // Pre-flight handling for all routes
+
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ["POST", "GET"],
+    credentials: true,
+  }));  
+
+
 
 
 app.use(fileUpload());
 
-const user = require('./routes/userRoute');
+const user = require('./routes/userRoute'); 
 const product = require('./routes/productRoute');
 const order = require('./routes/orderRoute');
 const payment = require('./routes/paymentRoute');
