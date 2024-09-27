@@ -5,11 +5,6 @@ const app = require('./backend/app');
 const connectDatabase = require('./backend/config/database');
 const PORT = process.env.PORT || 4000;
 
-// UncaughtException Error
-process.on('uncaughtException', (err) => {
-    console.log(`Error: ${err.message}`);
-    process.exit(1);
-});
 
 connectDatabase();
 
@@ -20,20 +15,14 @@ cloudinary.config({
 });
 
 // deployment
-
-    app.get('/', (req, res) => {
+app.get('/', (req, res) => {
         res.send('Server is Running! 🚀');
-    });
+});
 
 
-const server = app.listen(PORT, () => {
+
+
+    app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)
 });
 
-// Unhandled Promise Rejection
-process.on('unhandledRejection', (err) => {
-    console.log(`Error: ${err.message}`);
-    server.close(() => {
-        process.exit(1);
-    });
-});
