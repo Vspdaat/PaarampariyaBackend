@@ -48,7 +48,8 @@ const app = express();
 app.use(cors({
     origin: ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-    credentials: true, // Allow credentials if needed
+    credentials: false, // Allow credentials to be sent (like cookies)
+    allowedHeaders: ['Content-Type', 'Authorization'], // Add allowed headers if necessary
 }));
 
 app.use(express.json());
