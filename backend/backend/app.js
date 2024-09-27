@@ -49,22 +49,24 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Use CORS middleware
-const allowedOrigins = ['http://localhost:3000/', 'https://paarampariya-1.web.app/', 'https://paarampariyaadmin.web.app/'];
+const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
   
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ["POST", "GET", "OPTIONS"],
-  credentials: true,
-};
+    origin: function (origin, callback) {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(null, false); // Respond but without CORS headers
+      }
+    },
+    methods: ["POST", "GET", "OPTIONS", "PUT"],
+    credentials: true,
+  };
+  
 
-app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests
+
 
 
 
