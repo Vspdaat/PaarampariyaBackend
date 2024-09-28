@@ -114,10 +114,10 @@ const errorMiddleware = require('./middlewares/error');
 
 const app = express();
 
-// config
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config({ path: 'backend/config/config.env' });
-}
+// // config
+// if (process.env.NODE_ENV !== 'production') {
+//     require('dotenv').config({ path: 'backend/config/config.env' });
+// }
 
 // Use CORS middleware
 app.use(cors());
@@ -131,7 +131,6 @@ const user = require('./routes/userRoute');
 const product = require('./routes/productRoute');
 const order = require('./routes/orderRoute');
 const payment = require('./routes/paymentRoute');
-// app.js or your main server file
 const cartRoutes = require('./routes/cartRoutes');
 
 app.use('/api/v1', cartRoutes);
