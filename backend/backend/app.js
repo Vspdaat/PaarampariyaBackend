@@ -119,8 +119,29 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config({ path: 'backend/config/config.env' });
 }
 
+const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app'];
+
+const corsChecker = function (origin, callback) {
+    // Allow requests with no origin, like mobile apps or curl requests
+    if (!origin) return callback(null, true);
+    
+    // Check if the origin is in the allowedOrigins array
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+
 // Use CORS middleware
-app.use(cors());  // Enable CORS for all routes
+const corsOptions = {
+    origin: corsChecker,
+    methods: ['GET', 'POST'],     
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+  };
+  
+app.use(cors(corsOptions));
+
 app.options('*', cors());  // Handle preflight requests
 
 app.use(express.json());
@@ -133,7 +154,6 @@ const product = require('./routes/productRoute');
 const order = require('./routes/orderRoute');
 const payment = require('./routes/paymentRoute');
 const cartRoute = require('./routes/cartRoute');
-
 
 
 app.use('/api/v1', user);

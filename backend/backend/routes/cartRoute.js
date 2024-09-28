@@ -2,7 +2,7 @@
 const express = require('express');
 const { addToCart, getCartItems, updateCartQuantity, removeFromCart } = require('../controllers/cartController');
 
-const { isAuthenticatedUser } = require('../middlewares/auth'); // Ensure this middleware is set up
+const { isAuthenticatedUser } = require('../middlewares/auth'); 
 
 const router = express.Router();
 
