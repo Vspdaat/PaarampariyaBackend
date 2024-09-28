@@ -150,6 +150,7 @@ const product = require('./routes/productRoute');
 const order = require('./routes/orderRoute');
 const payment = require('./routes/paymentRoute');
 const cartRoute = require('./routes/cartRoute');
+const categoryRoute = require('./routes/categoryRoute');
 
 
 app.use('/api/v1', user);
@@ -157,6 +158,7 @@ app.use('/api/v1', product);
 app.use('/api/v1', order);
 app.use('/api/v1', payment);
 app.use('/api/v1', cartRoute);
+app.use('/api/v1', categoryRoute);
 
 // error middleware
 app.use(errorMiddleware);
