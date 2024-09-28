@@ -6,15 +6,15 @@ const { isAuthenticatedUser } = require('../middlewares/auth'); // Ensure this m
 const router = express.Router();
 
 // Route to get cart items
-router.get('/cart', isAuthenticatedUser, getCartItems);
+router.get('/cart', getCartItems);
 
 // Route to add to cart
-router.post('/cart', isAuthenticatedUser, addToCart);
+router.post('/cart', addToCart);
 // Route to update product quantity in cart
-router.put('/cart/:productId', isAuthenticatedUser, updateCartQuantity);
+router.put('/cart/:productId',  updateCartQuantity);
 
 // Route to remove product from cart
-router.delete('/cart/:productId', isAuthenticatedUser, removeFromCart);
+router.delete('/cart/:productId', removeFromCart);
 
 module.exports = router;
 

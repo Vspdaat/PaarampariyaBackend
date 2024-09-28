@@ -3,7 +3,7 @@ const Cart = require('../models/cartModel');
 const ErrorHandler = require('../utils/errorHandler');
 
 
-
+ 
 // Update Product Quantity in Cart
 exports.updateCartQuantity = async (req, res, next) => {
     const { quantity } = req.body;
