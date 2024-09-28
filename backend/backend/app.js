@@ -30,22 +30,24 @@
 // app.use(errorMiddleware);
 
 // module.exports = app;
-const express = require('express');
-const cors = require('cors'); // Import CORS
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const fileUpload = require('express-fileupload');
-const errorMiddleware = require('./middlewares/error');
 
-const app = express();
 
-// config
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config({ path: 'backend/config/config.env' });
-}
+// const express = require('express');
+// const cors = require('cors'); // Import CORS
+// const bodyParser = require('body-parser');
+// const cookieParser = require('cookie-parser');
+// const fileUpload = require('express-fileupload');
+// const errorMiddleware = require('./middlewares/error');
 
-// Use CORS middleware
-const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
+// const app = express();
+
+// // config
+// if (process.env.NODE_ENV !== 'production') {
+//     require('dotenv').config({ path: 'backend/config/config.env' });
+// }
+
+// // Use CORS middleware
+// const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
   
 
 // const corsOptions = {
@@ -66,11 +68,59 @@ const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app
 // const app = express();
 
 // Allow specific origin
-app.use(cors({
-  origin: 'https://paarampariyaadmin.web.app', // Replace with your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+
+
+
+// app.use(cors({
+//   origin: 'https://paarampariyaadmin.web.app',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   
-}));
+// }));
+
+// app.use(express.json());
+// app.use(cookieParser());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(fileUpload());
+
+// const user = require('./routes/userRoute');
+// const product = require('./routes/productRoute');
+// const order = require('./routes/orderRoute');
+// const payment = require('./routes/paymentRoute');
+// // app.js or your main server file
+// const cartRoutes = require('./routes/cartRoutes');
+// app.options('/api/v1', cors());
+// app.use('/api/v1', cartRoutes);
+
+// app.use('/api/v1', user);
+// app.use('/api/v1', product);
+
+// app.use('/api/v1', order);
+// app.use('/api/v1', payment);
+
+// // error middleware
+// app.use(errorMiddleware);
+
+// module.exports = app;
+
+
+
+
+const express = require('express');
+const cors = require('cors'); // Import CORS
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
+const errorMiddleware = require('./middlewares/error');
+
+const app = express();
+
+// config
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config({ path: 'backend/config/config.env' });
+}
+
+// Use CORS middleware
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());
@@ -83,12 +133,11 @@ const order = require('./routes/orderRoute');
 const payment = require('./routes/paymentRoute');
 // app.js or your main server file
 const cartRoutes = require('./routes/cartRoutes');
-app.options('/api/v1', cors());
+
 app.use('/api/v1', cartRoutes);
 
 app.use('/api/v1', user);
 app.use('/api/v1', product);
-
 app.use('/api/v1', order);
 app.use('/api/v1', payment);
 
