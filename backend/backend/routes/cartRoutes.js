@@ -1,14 +1,3 @@
-// const express = require('express');
-// const { addToCart } = require('../controllers/cartController');
-// const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
-// const router = express.Router();
-
-// // Allow only authenticated users with "admin" role to add products to the cart
-// router.post('/cart', isAuthenticatedUser, authorizeRoles('user'), addToCart);
-
-// module.exports = router;
-
-
 
 const express = require('express');
 const { addToCart, getCartItems, updateCartQuantity, removeFromCart } = require('../controllers/cartController');
