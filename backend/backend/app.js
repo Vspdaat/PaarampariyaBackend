@@ -120,7 +120,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Use CORS middleware
-app.use(cors());
+app.use(cors());  // Enable CORS for all routes
+app.options('*', cors());  // Handle preflight requests
 
 app.use(express.json());
 app.use(cookieParser());
