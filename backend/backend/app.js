@@ -119,30 +119,26 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config({ path: 'backend/config/config.env' });
 }
 
-const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app'];
+const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariya-backend.vercel.app'];
 
 const corsChecker = function (origin, callback) {
-    // Allow requests with no origin, like mobile apps or curl requests
-    if (!origin) return callback(null, true);
-    
-    // Check if the origin is in the allowedOrigins array
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+  if (!origin || allowedOrigins.includes(origin)) {
+    callback(null, true);
+  } else {
+    callback(new Error('Not allowed by CORS'));
   }
+};
 
-// Use CORS middleware
 const corsOptions = {
-    origin: corsChecker,
-    methods: ['GET', 'POST'],     
-    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'], 
-  };
-  
+  origin: corsChecker,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+};
+
 app.use(cors(corsOptions));
 
-app.options('*', cors());  // Handle preflight requests
 
 app.use(express.json());
 app.use(cookieParser());
@@ -166,3 +162,8 @@ app.use('/api/v1', cartRoute);
 app.use(errorMiddleware);
 
 module.exports = app;
+
+
+
+
+
