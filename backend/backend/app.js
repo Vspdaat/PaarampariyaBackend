@@ -137,7 +137,7 @@ const corsChecker = function (origin, callback) {
 const corsOptions = {
     origin: corsChecker,
     methods: ['GET', 'POST'],     
-    allowedHeaders: ['Content-Type', 'Authorization'], 
+    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'], 
   };
   
 app.use(cors(corsOptions));
