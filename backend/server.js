@@ -14,7 +14,6 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// deployment
 
     app.get('/', (req, res) => {
         res.send('Server is Running! 🚀');
