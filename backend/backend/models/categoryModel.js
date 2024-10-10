@@ -12,8 +12,8 @@ const imageSchema = new mongoose.Schema({
     }
 });
 
-// Define the schema for the Cat model
-const catSchema = new mongoose.Schema({
+// Define the schema for the Category model
+const categorySchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -22,10 +22,10 @@ const catSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    images: [imageSchema] // Using the image schema as an array
-}, { timestamps: true }); // Automatically manage createdAt and updatedAt fields
+    images: [imageSchema], // Array of images based on the image schema
+}, { timestamps: true }); // Automatically manages createdAt and updatedAt fields
 
-// Create the Cat model
-const Category = mongoose.model('Category', catSchema);
+// Create the Category model
+const Category = mongoose.model('Category', categorySchema);
 
 module.exports = Category;

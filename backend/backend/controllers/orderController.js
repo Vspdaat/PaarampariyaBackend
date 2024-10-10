@@ -420,20 +420,24 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Get Single Order Details
 exports.getSingleOrderDetails = asyncErrorHandler(async (req, res, next) => {
+    try {
+        console.log('Order ID received in backend:', req.params.id);
 
-    const order = await Order.findById(req.params.id).populate("user", "name email");
+        const order = await Order.findById(req.params.id).populate("user", "name email " );
+console.log(order)
+        if (!order) {
+            return next(new ErrorHandler("Order Not Found", 404));
+        }
 
-    console.log('Order ID received in backend:', orderId);
-    if (!order) {
-        return next(new ErrorHandler("Order Not Found", 404));
+        res.status(200).json({
+            success: true,
+            order,
+        });
+    } catch (error) {
+        console.error("Error fetching order details:", error);
+        return next(new ErrorHandler("Internal Server Error", 500));  // Logs the actual error
     }
-
-    res.status(200).json({
-        success: true,
-        order,
-    });
 });
 
 
@@ -474,9 +478,8 @@ exports.getAllOrders = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
-// Update Order Status ---ADMIN
-exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 
+exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -484,13 +487,14 @@ exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
     }
 
     if (order.orderStatus === "Delivered") {
-        return next(new ErrorHandler("Already Delivered", 400));
+        return next(new ErrorHandler("Order already delivered", 400));
     }
 
     if (req.body.status === "Shipped") {
         order.shippedAt = Date.now();
-        order.orderItems.forEach(async (i) => {
-            await updateStock(i.product, i.quantity)
+        // Loop through the products array instead of orderItems
+        order.products.forEach(async (item) => {
+            await updateStock(item.productId, item.quantity);
         });
     }
 
@@ -539,7 +543,7 @@ exports.placeOrder = async (req, res, next) => {
             user: req.user._id,
             products,
             billingDetails,
-            totalAmount: calculateTotalAmount(products), // Add logic to calculate total price
+            totalAmount: calculateTotalAmount(products), 
         });
 
         res.status(201).json({

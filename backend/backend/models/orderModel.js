@@ -114,6 +114,7 @@ const orderSchema = new mongoose.Schema({
     billingDetails: {
         name: String,
         email: String,
+        phoneNumber: Number,
         address: String,
         city: String,
         zip: String,
@@ -124,7 +125,7 @@ const orderSchema = new mongoose.Schema({
         state:String ,
         country: String,
         pincode: Number,
-        phoneNo: Number
+        phoneNumber: Number
     },
 
     totalAmount: {
@@ -134,7 +135,14 @@ const orderSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-    }
+    },
+    orderStatus: {
+        type: String,
+        required: true,
+        default: "Processing",
+    },
+    deliveredAt: Date,
+    shippedAt: Date
 });
 
 module.exports = mongoose.model('Order', orderSchema);
