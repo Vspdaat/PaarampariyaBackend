@@ -144,44 +144,33 @@ const cloudinary = require('cloudinary');
 const { uploadImageToStorage } = require('../utils/uploadImageToStorage'); 
 
 exports.createCategory = async (req, res, next) => {
-
     try {
         const { title, subtitle, images } = req.body;
-        console.log(images);
-        // Validate images
-        if (!images || !Array.isArray(images) || images.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'No images uploaded or incorrect format.',
-            });
+
+        // If images are passed in the request body, you can use them directly
+        let imagesLink = images || [];
+
+        // Validate and format images
+        if (!Array.isArray(imagesLink)) {
+            return res.status(400).json({ success: false, message: 'Images must be an array' });
         }
 
-        // Process and upload images
-        const imageDetails = await Promise.all(images.map(async (base64Image) => {
-            const base64Data = base64Image.split(',')[1]; // Get the part after the comma
-            const buffer = Buffer.from(base64Data, 'base64'); // Convert to buffer
-
-            // Upload the buffer to Cloudinary
-            const uploadResult = await uploadImageToStorage(buffer); // Ensure this returns the correct format
-            return {
-                public_id: uploadResult.public_id,
-                url: uploadResult.url,
-            };
-        }));
-
-        // Create the category with the uploaded images
-        const category = await Category.create({
+        // Create the category object
+        const category = new Category({
             title,
             subtitle,
-            images: imageDetails,
+            images: imagesLink, // Save uploaded images information
         });
+
+        // Save the category
+        await category.save();
 
         res.status(201).json({
             success: true,
             category,
         });
     } catch (error) {
-        console.error('Error creating category:', error); // Log the error for debugging
+        console.error('Error creating category:', error);
         res.status(500).json({
             success: false,
             message: error.message,
