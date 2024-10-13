@@ -1,324 +1,10 @@
-// const Product = require('../models/productModel');
-// const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
-// const SearchFeatures = require('../utils/searchFeatures');
-// const ErrorHandler = require('../utils/errorHandler');
-// const cloudinary = require('cloudinary');
-
-// // Get All Products
-// exports.getAllProducts = asyncErrorHandler(async (req, res, next) => {
-
-//     const resultPerPage = 12;
-//     const productsCount = await Product.countDocuments();
-//     // console.log(req.query);
-
-//     const searchFeature = new SearchFeatures(Product.find(), req.query)
-//         .search()
-//         .filter();
-
-//     let products = await searchFeature.query;
-//     let filteredProductsCount = products.length;
-
-//     searchFeature.pagination(resultPerPage);
-
-//     products = await searchFeature.query.clone();
-
-//     res.status(200).json({
-//         success: true,
-//         products,
-//         productsCount,
-//         resultPerPage,
-//         filteredProductsCount,
-//     });
-// });
-
-// // Get All Products ---Product Sliders
-// exports.getProducts = asyncErrorHandler(async (req, res, next) => {
-//     const products = await Product.find();
-
-//     res.status(200).json({
-//         success: true,
-//         products,
-//     });
-// });
-
-// // Get Product Details
-// exports.getProductDetails = asyncErrorHandler(async (req, res, next) => {
-
-//     const product = await Product.findById(req.params.id);
-
-//     if (!product) {
-//         return next(new ErrorHandler("Product Not Found", 404));
-//     }
-
-//     res.status(200).json({
-//         success: true,
-//         product,
-//     });
-// });
-
-// // Get All Products ---ADMIN
-// exports.getAdminProducts = asyncErrorHandler(async (req, res, next) => {
-//     const products = await Product.find();
-
-//     res.status(200).json({
-//         success: true,
-//         products,
-//     });
-// });
-
-// // Create Product ---ADMIN
-// exports.createProduct = asyncErrorHandler(async (req, res, next) => {
-
-//     let images = [];
-//     if (typeof req.body.images === "string") {
-//         images.push(req.body.images);
-//     } else {
-//         images = req.body.images;
-//     }
-
-//     const imagesLink = [];
-
-//     for (let i = 0; i < images.length; i++) {
-//         const result = await cloudinary.v2.uploader.upload(images[i], {
-//             folder: "products",
-//         });
-
-//         imagesLink.push({
-//             public_id: result.public_id,
-//             url: result.secure_url,
-//         });
-//     }
-
-//     const result = await cloudinary.v2.uploader.upload(req.body.logo, {
-//         folder: "brands",
-//     });
-//     const brandLogo = {
-//         public_id: result.public_id,
-//         url: result.secure_url,
-//     };
-
-//     req.body.brand = {
-//         name: req.body.brandname,
-//         logo: brandLogo
-//     }
-//     req.body.images = imagesLink;
-//     req.body.user = req.user.id;
-
-//     let specs = [];
-//     req.body.specifications.forEach((s) => {
-//         specs.push(JSON.parse(s))
-//     });
-//     req.body.specifications = specs;
-
-//     const product = await Product.create(req.body);
-
-//     res.status(201).json({
-//         success: true,
-//         product
-//     });
-// });
-
-// // Update Product ---ADMIN
-// exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
-
-//     let product = await Product.findById(req.params.id);
-
-//     if (!product) {
-//         return next(new ErrorHandler("Product Not Found", 404));
-//     }
-
-//     if (req.body.images !== undefined) {
-//         let images = [];
-//         if (typeof req.body.images === "string") {
-//             images.push(req.body.images);
-//         } else {
-//             images = req.body.images;
-//         }
-//         for (let i = 0; i < product.images.length; i++) {
-//             await cloudinary.v2.uploader.destroy(product.images[i].public_id);
-//         }
-
-//         const imagesLink = [];
-
-//         for (let i = 0; i < images.length; i++) {
-//             const result = await cloudinary.v2.uploader.upload(images[i], {
-//                 folder: "products",
-//             });
-
-//             imagesLink.push({
-//                 public_id: result.public_id,
-//                 url: result.secure_url,
-//             });
-//         }
-//         req.body.images = imagesLink;
-//     }
-
-//     if (req.body.logo.length > 0) {
-//         await cloudinary.v2.uploader.destroy(product.brand.logo.public_id);
-//         const result = await cloudinary.v2.uploader.upload(req.body.logo, {
-//             folder: "brands",
-//         });
-//         const brandLogo = {
-//             public_id: result.public_id,
-//             url: result.secure_url,
-//         };
-
-//         req.body.brand = {
-//             name: req.body.brandname,
-//             logo: brandLogo
-//         }
-//     }
-
-//     let specs = [];
-//     req.body.specifications.forEach((s) => {
-//         specs.push(JSON.parse(s))
-//     });
-//     req.body.specifications = specs;
-//     req.body.user = req.user.id;
-
-//     product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-//         new: true,
-//         runValidators: true,
-//         useFindAndModify: false,
-//     });
-
-//     res.status(201).json({
-//         success: true,
-//         product
-//     });
-// });
-
-// // Delete Product ---ADMIN
-// exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
-
-//     const product = await Product.findById(req.params.id);
-
-//     if (!product) {
-//         return next(new ErrorHandler("Product Not Found", 404));
-//     }
-
-//     for (let i = 0; i < product.images.length; i++) {
-//         await cloudinary.v2.uploader.destroy(product.images[i].public_id);
-//     }
-
-//     await product.remove();
-
-//     res.status(201).json({
-//         success: true
-//     });
-// });
-
-// // Create OR Update Reviews
-// exports.createProductReview = asyncErrorHandler(async (req, res, next) => {
-
-//     const { rating, comment, productId } = req.body;
-
-//     const review = {
-//         user: req.user._id,
-//         name: req.user.name,
-//         rating: Number(rating),
-//         comment,
-//     }
-
-//     const product = await Product.findById(productId);
-
-//     if (!product) {
-//         return next(new ErrorHandler("Product Not Found", 404));
-//     }
-
-//     const isReviewed = product.reviews.find(review => review.user.toString() === req.user._id.toString());
-
-//     if (isReviewed) {
-
-//         product.reviews.forEach((rev) => { 
-//             if (rev.user.toString() === req.user._id.toString())
-//                 (rev.rating = rating, rev.comment = comment);
-//         });
-//     } else {
-//         product.reviews.push(review);
-//         product.numOfReviews = product.reviews.length;
-//     }
-
-//     let avg = 0;
-
-//     product.reviews.forEach((rev) => {
-//         avg += rev.rating;
-//     });
-
-//     product.ratings = avg / product.reviews.length;
-
-//     await product.save({ validateBeforeSave: false });
-
-//     res.status(200).json({
-//         success: true
-//     });
-// });
-
-// // Get All Reviews of Product
-// exports.getProductReviews = asyncErrorHandler(async (req, res, next) => {
-
-//     const product = await Product.findById(req.query.id);
-
-//     if (!product) {
-//         return next(new ErrorHandler("Product Not Found", 404));
-//     }
-
-//     res.status(200).json({
-//         success: true,
-//         reviews: product.reviews
-//     });
-// });
-
-// // Delete Reveiws
-// exports.deleteReview = asyncErrorHandler(async (req, res, next) => {
-
-//     const product = await Product.findById(req.query.productId);
-
-//     if (!product) {
-//         return next(new ErrorHandler("Product Not Found", 404));
-//     }
-
-//     const reviews = product.reviews.filter((rev) => rev._id.toString() !== req.query.id.toString());
-
-//     let avg = 0;
-
-//     reviews.forEach((rev) => {
-//         avg += rev.rating;
-//     });
-
-//     let ratings = 0;
-
-//     if (reviews.length === 0) {
-//         ratings = 0;
-//     } else {
-//         ratings = avg / reviews.length;
-//     }
-
-//     const numOfReviews = reviews.length;
-
-//     await Product.findByIdAndUpdate(req.query.productId, {
-//         reviews,
-//         ratings: Number(ratings),
-//         numOfReviews,
-//     }, {
-//         new: true,
-//         runValidators: true,
-//         useFindAndModify: false,
-//     });
-
-//     res.status(200).json({
-//         success: true,
-//     });
-// });
-
-
-
 const Product = require('../models/productModel');
 const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
 const SearchFeatures = require('../utils/searchFeatures');
 const ErrorHandler = require('../utils/errorHandler');
 const cloudinary = require('cloudinary');
-const { uploadImageToStorage } = require('../utils/uploadImageToStorage'); 
+const { uploadImageToStorage } = require('../utils/uploadImageToStorage');
+
 // Get All Products
 exports.getAllProducts = asyncErrorHandler(async (req, res, next) => {
     const resultPerPage = 12;
@@ -373,13 +59,13 @@ exports.getAdminProducts = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
+
 exports.createProduct = async (req, res, next) => {
     let images = [];
-    let brandLogo = {};
     let highlights = [];
     let recipes = [];
 
-    console.log("Request Body: ", req.body);
+    console.log("Request Body: ", req.body.product);
 
     // Handle base64 images in req.body.images
     if (req.body.images) {
@@ -411,29 +97,55 @@ exports.createProduct = async (req, res, next) => {
             }
         }));
 
-        // Handle brand logo upload if provided
-        if (req.body.logo) {
-            const logoBase64Data = req.body.logo.split(',')[1];
-            if (!logoBase64Data) {
-                throw new Error('Logo data is not in the correct format.');
-            }
+        // Log the images after upload
+        console.log("Uploaded Images: ", imagesLink);
 
-            const logoBuffer = Buffer.from(logoBase64Data, 'base64');
-            const logoResult = await uploadImageToStorage(logoBuffer);
-            brandLogo = {
-                public_id: logoResult.public_id,
-                url: logoResult.url,
-            };
+        // Parse availableWeights
+        if (req.body.availableWeights) {
+            console.log("Raw availableWeights: ", req.body.availableWeights); // Log the raw input
+
+            try {
+                // Parse availableWeights as an array
+                req.body.availableWeights = Array.isArray(req.body.availableWeights)
+                    ? req.body.availableWeights.map(weight => JSON.parse(weight)) // Parse each JSON string
+                    : [JSON.parse(req.body.availableWeights)]; // In case it's a single entry
+
+                // Log parsed availableWeights
+                console.log("Parsed availableWeights: ", req.body.availableWeights);
+
+                // Clean up availableWeights before processing
+                req.body.availableWeights = req.body.availableWeights.filter(weight => weight.weight && weight.price);
+
+                console.log("Processed availableWeights: ", req.body.availableWeights); // Log the processed availableWeights
+            } catch (error) {
+                console.error("Error parsing availableWeights: ", error.message); // Log error message
+                req.body.availableWeights = []; // Reset to empty array on error
+            }
+        } else {
+            console.log("No availableWeights provided.");
+            req.body.availableWeights = [];
         }
 
-        // Parse specifications, highlights, and recipes
-        req.body.specifications = req.body.specifications ? 
-            (Array.isArray(req.body.specifications) ? req.body.specifications : JSON.parse(req.body.specifications)) : [];
-        
-        req.body.highlights = req.body.highlights ? 
+        // Check if availableWeights has valid entries
+        if (req.body.availableWeights.length === 0) {
+            return res.status(400).json({ success: false, message: 'Available weights must be provided and cannot be empty.' });
+        }
+
+
+
+        // Transform availableWeights
+        const availableWeightsArray = req.body.availableWeights.map(weight => {
+            return { weight: weight.weight, price: weight.price }; // Keep weight object
+        });
+
+        req.body.availableWeights = availableWeightsArray; // Assign processed weights
+        console.log("Processed availableWeights: ", req.body.availableWeights); // Log the processed availableWeights
+
+        // Process highlights and recipes
+        req.body.highlights = req.body.highlights ?
             (Array.isArray(req.body.highlights) ? req.body.highlights : JSON.parse(req.body.highlights)) : [];
-        
-        req.body.recipes = req.body.recipes ? 
+
+        req.body.recipes = req.body.recipes ?
             (Array.isArray(req.body.recipes) ? req.body.recipes : JSON.parse(req.body.recipes)) : [];
 
         // Process highlights images
@@ -485,14 +197,13 @@ exports.createProduct = async (req, res, next) => {
         }
 
         // Prepare the product data
-        req.body.brand = {
-            name: req.body.brandname,
-            logo: brandLogo,
-        };
         req.body.images = imagesLink;
         req.body.user = req.user.id;
         req.body.highlights = highlights; // Assign highlights with uploaded images
         req.body.recipes = recipes; // Assign recipes with uploaded images
+
+        // Log final product data before creation
+        console.log("Final product data: ", req.body);
 
         // Create the product
         const product = await Product.create(req.body);
@@ -510,102 +221,141 @@ exports.createProduct = async (req, res, next) => {
     }
 };
 
+const convertImageToBase64 = async (url) => {
+    try {
+        const response = await fetch(url);
+
+        // Check if the fetch call was successful
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image from URL: ${url}. Status: ${response.status}`);
+        }
+
+        const buffer = await response.buffer(); // Get image data as buffer
+        const contentType = response.headers.get('content-type'); // Get MIME type from response
+
+        return {
+            base64: buffer.toString('base64'),
+            mimeType: contentType,
+        };
+    } catch (error) {
+        // Catch errors and provide more information about the failure
+        console.error(`Error fetching image from URL: ${url}, error.message`);
+        throw new Error(`Failed to fetch or process image from URL: ${url}. Error: ${error.message}`);
+    }
+};
+
+const isValidUrl = (url) => {
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+const processImages = async (items) => {
+    if (!Array.isArray(items)) {
+        console.log("Data received for image processing is not an array:", items);
+        throw new Error("Provided data is not an array");
+    }
+
+    return await Promise.all(items.map(async (item) => {
+        if (item.url && isValidUrl(item.url)) {  // Check if item has a valid url
+            console.log("Processing image URL:", item.url); // Log image URL
+
+            try {
+                const { base64, mimeType } = await convertImageToBase64(item.url);
+
+                return {
+                    ...item,
+                    base64: `data:${mimeType};base64,${base64}`, // Set base64 string directly
+                };
+            } catch (error) {
+                console.error(`Failed to process image for item with url: ${item.url}`, error.message);
+                throw new Error(`Failed to process image for item with url: ${item.url}. Error: ${error.message}`);
+            }
+        } else {
+            console.error("No valid image URL or invalid image structure for item:", item);
+            return item; // Return unmodified item if no valid image
+        }
+    }));
+};
+
 exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
+    console.log("Received request to update product:", req.params.id);
+
     let product = await Product.findById(req.params.id);
     if (!product) {
         return next(new ErrorHandler("Product Not Found", 404));
     }
 
-    // Handle main product images
-    if (req.body.images !== undefined) {
-        let images = [];
-        if (typeof req.body.images === "string") {
-            images.push(req.body.images);
+    // Log incoming request body for debugging
+    console.log("Incoming request body:", req.body);
+
+    // Process highlights if provided
+    if (req.body.highlights) {
+        console.log("Incoming highlights data:", req.body.highlights);
+        if (typeof req.body.highlights === "string") {
+            try {
+                req.body.highlights = JSON.parse(req.body.highlights);
+            } catch (error) {
+                return next(new ErrorHandler("Failed to parse highlights JSON string", 400));
+            }
+        }
+
+        if (Array.isArray(req.body.highlights)) {
+            try {
+                req.body.highlights = await processImages(req.body.highlights);
+            } catch (error) {
+                return next(new ErrorHandler(`Failed to process highlights: ${error.message}`, 400));
+            }
         } else {
-            images = req.body.images;
+            console.error("Highlights data is still not an array:", req.body.highlights);
+            return next(new ErrorHandler("Highlights data is not an array", 400));
         }
-
-        // Delete old images from Cloudinary
-        for (let i = 0; i < product.images.length; i++) {
-            await cloudinary.v2.uploader.destroy(product.images[i].public_id);
-        }
-
-        const imagesLink = [];
-        for (let i = 0; i < images.length; i++) {
-            const result = await cloudinary.v2.uploader.upload(images[i], {
-                folder: "products",
-            });
-            imagesLink.push({
-                public_id: result.public_id,
-                url: result.secure_url,
-            });
-        }
-        req.body.images = imagesLink;
     }
 
-    // Handle brand logo update
-    if (req.body.logo) {
-        await cloudinary.v2.uploader.destroy(product.brand.logo.public_id);
-        const result = await cloudinary.v2.uploader.upload(req.body.logo, {
-            folder: "brands",
+    // Process images if provided
+    if (req.body.images) {
+        console.log("Incoming images data:", req.body.images);
+        try {
+            if (typeof req.body.images === "string") {
+                req.body.images = JSON.parse(req.body.images);
+            }
+            if (Array.isArray(req.body.images)) {
+                req.body.images = await processImages(req.body.images);
+            }
+        } catch (error) {
+            return next(new ErrorHandler("Failed to process images array", 400));
+        }
+    }
+
+    // Process available weights
+    if (req.body.availableWeights) {
+        console.log("Incoming availableWeights data:", req.body.availableWeights);
+
+        // Ensure it is an array
+        if (!Array.isArray(req.body.availableWeights)) {
+            return next(new ErrorHandler("availableWeights is not an array", 400));
+        }
+
+        // Validate the structure of each weight object
+        req.body.availableWeights = req.body.availableWeights.map(weight => {
+            if (typeof weight === "object" && weight.weight && weight.price) {
+                return {
+                    weight: weight.weight, // Ensure it's a string
+                    price: weight.price, // Ensure it's a number
+                };
+            } else {
+                throw new Error("Invalid weight structure: each weight should be an object with 'weight' and 'price' properties");
+            }
         });
-        const brandLogo = {
-            public_id: result.public_id,
-            url: result.secure_url,
-        };
-        req.body.brand = {
-            name: req.body.brandname,
-            logo: brandLogo,
-        };
+    } else {
+        req.body.availableWeights = []; // Default to an empty array if not provided
     }
 
-    // Handle highlights update
-    if (req.body.highlights !== undefined) {
-        const highlights = [];
-        for (let i = 0; i < product.highlights.length; i++) {
-            await cloudinary.v2.uploader.destroy(product.highlights[i].public_id);
-        }
-
-        for (let i = 0; i < req.body.highlights.length; i++) {
-            const result = await cloudinary.v2.uploader.upload(req.body.highlights[i], {
-                folder: "highlights",
-            });
-            highlights.push({
-                public_id: result.public_id,
-                url: result.secure_url,
-            });
-        }
-        req.body.highlights = highlights;
-    }
-
-    // Handle recipes update
-    if (req.body.recipes !== undefined) {
-        const recipes = [];
-        for (let i = 0; i < product.recipes.length; i++) {
-            await cloudinary.v2.uploader.destroy(product.recipes[i].public_id);
-        }
-
-        for (let i = 0; i < req.body.recipes.length; i++) {
-            const result = await cloudinary.v2.uploader.upload(req.body.recipes[i], {
-                folder: "recipes",
-            });
-            recipes.push({
-                public_id: result.public_id,
-                url: result.secure_url,
-            });
-        }
-        req.body.recipes = recipes;
-    }
-
-    // Handle specifications and available weights
-    req.body.specifications = req.body.specifications ? 
-        (Array.isArray(req.body.specifications) ? req.body.specifications : JSON.parse(req.body.specifications)) : [];
-    
-    req.body.availableWeights = req.body.availableWeights ? 
-        (Array.isArray(req.body.availableWeights) ? req.body.availableWeights : JSON.parse(req.body.availableWeights)) : [];
-
-    // Assign the user who updated the product
-    req.body.user = req.user.id;
+    // Log processed data before updating the product
+    console.log("Processed product data being sent to the database:", JSON.stringify(req.body, null, 2));
 
     // Update the product with new data
     product = await Product.findByIdAndUpdate(req.params.id, req.body, {
@@ -619,8 +369,6 @@ exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
         product,
     });
 });
-
-
 
 // Get Product Details with Recipes
 exports.getProductDetailsWithRecipes = asyncErrorHandler(async (req, res, next) => {
@@ -673,7 +421,7 @@ exports.createProductReview = asyncErrorHandler(async (req, res, next) => {
     const isReviewed = product.reviews.find(review => review.user.toString() === req.user._id.toString());
 
     if (isReviewed) {
-        product.reviews.forEach((rev) => { 
+        product.reviews.forEach((rev) => {
             if (rev.user.toString() === req.user._id.toString()) {
                 (rev.rating = rating, rev.comment = comment);
             }
@@ -719,35 +467,48 @@ exports.getProductReviews = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
-// Delete Reviews
 exports.deleteReview = asyncErrorHandler(async (req, res, next) => {
-    const product = await Product.findById(req.query.productId);
+    const { productId } = req.query; // Assuming productId is being sent as a query parameter
+    const reviewId = req.params.id; // Assuming reviewId is sent as a path parameter
+
+    // Find the product by ID
+    const product = await Product.findById(productId);
     if (!product) {
         return next(new ErrorHandler("Product Not Found", 404));
     }
 
-    const reviews = product.reviews ? 
-        product.reviews.filter((rev) => rev._id.toString() !== req.query.id.toString()) : 
-        [];
+    // Check if reviews are defined and filter out the review to be deleted
+    if (!product.reviews || product.reviews.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: "No reviews to delete",
+        });
+    }
 
-    let avg = 0;
-    reviews.forEach((rev) => {
-        avg += rev.rating;
-    });
+    // Filter out the review to be deleted
+    const reviews = product.reviews.filter((rev) => rev._id && rev._id.toString() !== reviewId.toString());
 
-    let ratings = reviews.length > 0 ? avg / reviews.length : 0;
+    // Recalculate the average rating
+    const avg = reviews.reduce((acc, rev) => acc + rev.rating, 0);
+    const ratings = reviews.length > 0 ? avg / reviews.length : 0;
 
-    await Product.findByIdAndUpdate(req.query.productId, {
-        reviews,
-        ratings: Number(ratings),
-        numOfReviews: reviews.length,
-    }, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
+    // Update product with the new reviews, ratings, and number of reviews
+    await Product.findByIdAndUpdate(
+        productId,
+        {
+            reviews,
+            ratings: Number(ratings),
+            numOfReviews: reviews.length,
+        },
+        {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        }
+    );
 
     res.status(200).json({
         success: true,
+        message: "Review deleted successfully",
     });
 });
