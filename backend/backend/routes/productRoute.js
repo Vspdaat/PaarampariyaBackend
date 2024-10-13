@@ -46,7 +46,7 @@ router.route('/review/:id').get(getProductReviews);
 
 router.route('/review').put(isAuthenticatedUser, createProductReview);
 
-router.route('/admin/reviews')
+router.route('/admin/reviews/:id')
     .get(getProductReviews)
     .delete(isAuthenticatedUser, deleteReview);
 
