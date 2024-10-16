@@ -46,6 +46,7 @@ const payment = require('./routes/paymentRoute');
 const cartRoute = require('./routes/cartRoute');
 const categoryRoute = require('./routes/categoryRoute');
 const feedbackRoute = require('./routes/feedbackRoute');
+const bannerRoute = require('./routes/bannerRoute');
 
 
 app.use('/api/v1', user);
@@ -55,6 +56,7 @@ app.use('/api/v1', payment);
 app.use('/api/v1', cartRoute);
 app.use('/api/v1', categoryRoute);
 app.use('/api/v1', feedbackRoute);
+app.use('/api/v1', bannerRoute);
 
 // error middleware
 app.use(errorMiddleware);

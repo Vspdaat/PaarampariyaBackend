@@ -22,7 +22,13 @@ const categorySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    images: [imageSchema], // Array of images based on the image schema
+    images: [imageSchema],
+    bsimages: [imageSchema],
+    //set boolean property for isbestseller
+    isbestseller: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true }); // Automatically manages createdAt and updatedAt fields
 
 // Create the Category model

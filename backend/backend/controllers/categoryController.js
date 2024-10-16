@@ -1,154 +1,14 @@
-// const Category = require('../models/categoryModel');
-// const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
-// const cloudinary = require('cloudinary');
-// const ErrorHandler = require('../utils/errorHandler');
-
-// // Create Category
-// exports.createCategory = asyncErrorHandler(async (req, res, next) => {
-//     let images = [];
-//     if (typeof req.body.images === "string") {
-//         images.push(req.body.images);
-//     } else {
-//         images = req.body.images;
-//     }
-
-//     const imagesLink = [];
-
-//     try {
-//         for (let i = 0; i < images.length; i++) {
-//             const result = await cloudinary.v2.uploader.upload(images[i], {
-//                 folder: "categories",
-//             });
-//             imagesLink.push({
-//                 public_id: result.public_id,
-//                 url: result.secure_url,
-//             });
-//         }
-//     } catch (error) {
-//         console.error("Cloudinary upload error:", error);
-//         return next(new ErrorHandler('Error uploading images to Cloudinary', 500));
-//     }
-
-//     const { title, subtitle, description } = req.body;
-//     if (!title || !subtitle || !description) {
-//         return next(new ErrorHandler('Please provide title, subtitle, and description', 400));
-//     }
-
-//     req.body.images = imagesLink;
-//     req.body.user = req.user.id; // Assuming the user creating the category is authenticated
-
-//     const category = await Category.create(req.body);
-//     res.status(201).json({
-//         success: true,
-//         category,
-//     });
-// });
-
-
-// // Update Category
-// exports.updateCategory = asyncErrorHandler(async (req, res, next) => {
-//     const categoryId = req.params.id;
-
-//     const category = await Category.findById(categoryId);
-//     if (!category) {
-//         return next(new ErrorHandler('Category not found', 404));
-//     }
-
-//     // Handle images
-//     let imagesLink = category.images;
-
-//     if (req.body.images) {
-//         // Delete previous images from Cloudinary if new ones are provided
-//         for (let i = 0; i < imagesLink.length; i++) {
-//             await cloudinary.v2.uploader.destroy(imagesLink[i].public_id);
-//         }
-
-//         imagesLink = [];
-//         const images = typeof req.body.images === "string" ? [req.body.images] : req.body.images;
-
-//         for (let i = 0; i < images.length; i++) {
-//             const result = await cloudinary.v2.uploader.upload(images[i], {
-//                 folder: "categories",
-//             });
-
-//             imagesLink.push({
-//                 public_id: result.public_id,
-//                 url: result.secure_url,
-//             });
-//         }
-//     }
-
-//     // Update category fields
-//     category.title = req.body.title || category.title;
-//     category.subtitle = req.body.subtitle || category.subtitle;
-//     category.description = req.body.description || category.description; // Update description
-//     category.images = imagesLink.length > 0 ? imagesLink : category.images; // Only update images if new ones are provided
-
-//     await category.save();
-
-//     res.status(200).json({
-//         success: true,
-//         category,
-//     });
-// });
-
-// // Delete Category
-// exports.deleteCategory = asyncErrorHandler(async (req, res, next) => {
-//     const categoryId = req.params.id;
-
-//     const category = await Category.findById(categoryId);
-//     if (!category) {
-//         return next(new ErrorHandler('Category not found', 404));
-//     }
-
-//     // Delete images from Cloudinary
-//     for (let i = 0; i < category.images.length; i++) {
-//         await cloudinary.v2.uploader.destroy(category.images[i].public_id);
-//     }
-
-//     await category.remove();
-
-//     res.status(200).json({
-//         success: true,
-//         message: 'Category deleted successfully',
-//     });
-// });
-
-// // Get Category
-// exports.getCategory = asyncErrorHandler(async (req, res, next) => {
-//     const categoryId = req.params.id;
-
-//     const category = await Category.findById(categoryId);
-//     if (!category) {
-//         return next(new ErrorHandler('Category not found', 404));
-//     }
-
-//     res.status(200).json({
-//         success: true,
-//         category,
-//     });
-// });
-
-// // Get All Categories
-// exports.getAllCategories = asyncErrorHandler(async (req, res, next) => {
-//     const categories = await Category.find();
-
-//     res.status(200).json({
-//         success: true,
-//         categories,
-//     });
-// });
-
 const Category = require('../models/categoryModel');
 const cloudinary = require('cloudinary');
 const { uploadImageToStorage } = require('../utils/uploadImageToStorage'); 
 
 exports.createCategory = async (req, res, next) => {
     try {
-        const { title, subtitle, images } = req.body;
+        const { title, subtitle, images, bsimages, isBestSeller } = req.body; // Change isbestseller to isBestSeller
 
         // If images are passed in the request body, you can use them directly
         let imagesLink = images || [];
+        let bsimagesLink = bsimages || [];
 
         // Validate and format images
         if (!Array.isArray(imagesLink)) {
@@ -159,7 +19,9 @@ exports.createCategory = async (req, res, next) => {
         const category = new Category({
             title,
             subtitle,
-            images: imagesLink, // Save uploaded images information
+            images: imagesLink,
+            bsimages: bsimagesLink, 
+            isbestseller: isBestSeller || false, // Save uploaded images information, ensuring to use the correct property
         });
 
         // Save the category
@@ -177,7 +39,7 @@ exports.createCategory = async (req, res, next) => {
         });
     }
 };
-// Get all categories
+
 exports.getCategories = async (req, res, next) => {
     try {
         // Find all categories from the database
@@ -193,6 +55,12 @@ exports.getCategories = async (req, res, next) => {
                 url: image.url,
                 _id: image._id,
             })),  // Images array containing public_id, url, and image _id
+            bsimages: category.bsimages.map(image => ({
+                public_id: image.public_id,
+                url: image.url,
+                _id: image._id,
+            })), // Include bsimages in response
+            isbestseller: category.isbestseller, // Include isbestseller
             createdAt: category.createdAt,
             updatedAt: category.updatedAt
         }));
@@ -208,6 +76,8 @@ exports.getCategories = async (req, res, next) => {
         });
     }
 };
+
+
 
 
 // Get a single category    by ID
@@ -234,7 +104,6 @@ exports.getCategoryById = async (req, res, next) => {
     }
 };
 
-// Update a category
 exports.updateCategory = async (req, res, next) => {
     try {
         let category = await Category.findById(req.params.id);
@@ -247,11 +116,31 @@ exports.updateCategory = async (req, res, next) => {
         }
 
         const { title, subtitle, images } = req.body;
-        category.title = title || category.title;
-        category.subtitle = subtitle || category.subtitle;
-        category.images = images || category.images;
 
+        // Update title and subtitle only if provided in request body
+        if (title) category.title = title;
+        if (subtitle) category.subtitle = subtitle;
+
+        // Log the incoming images for debugging
+        console.log("Incoming images:", images);
+
+        // If images are provided, validate each image has the required fields
+        if (images && Array.isArray(images)) {
+            for (let img of images) {
+                console.log("Validating image:", img); // Log each image for validation
+                if (!img.public_id || !img.url) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Each image must have both public_id and url.',
+                    });
+                }
+            }
+            category.images = images; // Only set if all images are valid
+        }
+
+        // Save the updated category
         await category.save();
+
         res.status(200).json({
             success: true,
             category,
@@ -288,7 +177,3 @@ exports.deleteCategory = async (req, res, next) => {
         });
     }
 };
-
-
-
- 
