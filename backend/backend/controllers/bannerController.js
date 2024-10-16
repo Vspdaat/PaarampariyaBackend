@@ -1,4 +1,4 @@
-const Banner = require('../models/BannerModel');
+const Banner = require('../models/bannerModel');
 const { uploadImageToStorage } = require('../utils/uploadImageToStorage');
 
 
