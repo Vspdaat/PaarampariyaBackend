@@ -1,4 +1,4 @@
-const Banner = require('../models/bannerModel');
+const Banner = require('../models/BannerModel');
 const { uploadImageToStorage } = require('../utils/uploadImageToStorage');
 
 
@@ -79,96 +79,55 @@ exports.getBannerById = async (req, res) => {
 
 // Update a banner by ID
 
-// exports.updateBanner = async (req, res) => {
-//     try {
-//         const { title, images } = req.body; // Changed from image to images to match the category logic
-
-//         let banner = await Banner.findById(req.params.id);
-//         if (!banner) {
-//             return res.status(404).json({ success: false, message: 'Banner not found' });
-//         }
-
-//         // Update the title if provided
-//         if (title) {
-//             banner.title = title;
-//         }
-
-//         // If images are provided, validate each image has the required fields
-//         if (images && Array.isArray(images)) {
-//             for (let img of images) {
-//                 // Log each image for validation
-//                 console.log("Validating image:", img); 
-//                 if (!img.public_id || !img.url) {
-//                     return res.status(400).json({
-//                         success: false,
-//                         message: 'Each image must have both public_id and url.',
-//                     });
-//                 }
-//             }
-//             banner.images = images; // Only set if all images are valid
-//         }
-
-//         // Save the updated banner
-//         await banner.save();
-
-//         res.status(200).json({
-//             success: true,
-//             banner,
-//         });
-//     } catch (error) {
-//         console.error('Error updating banner:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: error.message,
-//         });
-//     }
-// };
-// Backend: updateBanner controller
 exports.updateBanner = async (req, res) => {
     try {
-      const { title, images } = req.body; // Changed from image to images to match the category logic
-  
-      let banner = await Banner.findById(req.params.id);
-      if (!banner) {
-        return res.status(404).json({ success: false, message: 'Banner not found' });
-      }
-  
-      // Update the title if provided
-      if (title) {
-        banner.title = title;
-      }
-  
-      // If images are provided, validate each image has the required fields
-      if (image && Array.isArray(image)) {
-        for (let img of image) {
-          console.log("Validating image:", img); // Log each image for validation
-          if (!img.public_id || !img.url) {
-            return res.status(400).json({
-              success: false,
-              message: 'Each image must have both public_id and url.',
-            });
-          }
+        const { title, images } = req.body; // Changed from image to images to match the category logic
+
+        let banner = await Banner.findById(req.params.id);
+        if (!banner) {
+            return res.status(404).json({ success: false, message: 'Banner not found' });
         }
-        banner.image = images; // Only set if all images are valid
-      }
-  
-      // Save the updated banner
-      await banner.save();
-      console.log("Updated banner:", banner); // Log the updated banner
-  
-      res.status(200).json({
-        success: true,
-        banner,
-      });
+
+        // Update the title if provided
+        if (title) {
+            banner.title = title;
+        }
+
+        // If images are provided, validate each image has the required fields
+        if (images && Array.isArray(images)) {
+            for (let img of images) {
+                // Log each image for validation
+                console.log("Validating image:", img); 
+                if (!img.public_id || !img.url) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Each image must have both public_id and url.',
+                    });
+                }
+            }
+            // If images are provided, validate and update the image field
+if (images && images.length > 0) {
+    banner.image = images[0]; // Update with the first image in the array
+}
+ // Only set if all images are valid
+        }
+
+        // Save the updated banner
+        await banner.save();
+
+        res.status(200).json({
+            success: true,
+            banner,
+        });
     } catch (error) {
-      console.error('Error updating banner:', error);
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
+        console.error('Error updating banner:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
-  };
-  
+};
+
 // Delete a banner by ID
 exports.deleteBanner = async (req, res) => {
     try {

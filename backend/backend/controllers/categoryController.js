@@ -4,12 +4,11 @@ const { uploadImageToStorage } = require('../utils/uploadImageToStorage');
 
 exports.createCategory = async (req, res, next) => {
     try {
-        const { title, subtitle, images, bsimages, isBestSeller } = req.body; // Change isbestseller to isBestSeller
+        const { title, subtitle, images,bsimages,isbestseller } = req.body;
 
         // If images are passed in the request body, you can use them directly
         let imagesLink = images || [];
         let bsimagesLink = bsimages || [];
-
         // Validate and format images
         if (!Array.isArray(imagesLink)) {
             return res.status(400).json({ success: false, message: 'Images must be an array' });
@@ -21,7 +20,7 @@ exports.createCategory = async (req, res, next) => {
             subtitle,
             images: imagesLink,
             bsimages: bsimagesLink, 
-            isbestseller: isBestSeller || false, // Save uploaded images information, ensuring to use the correct property
+            isbestseller: isbestseller || false, // Save uploaded images information
         });
 
         // Save the category
@@ -40,6 +39,8 @@ exports.createCategory = async (req, res, next) => {
     }
 };
 
+
+// Get all categories
 exports.getCategories = async (req, res, next) => {
     try {
         // Find all categories from the database
@@ -59,8 +60,8 @@ exports.getCategories = async (req, res, next) => {
                 public_id: image.public_id,
                 url: image.url,
                 _id: image._id,
-            })), // Include bsimages in response
-            isbestseller: category.isbestseller, // Include isbestseller
+            })),  // Images array containing public_id, url, and image _id
+            isbestseller: category.isbestseller,
             createdAt: category.createdAt,
             updatedAt: category.updatedAt
         }));
@@ -76,8 +77,6 @@ exports.getCategories = async (req, res, next) => {
         });
     }
 };
-
-
 
 
 // Get a single category    by ID
@@ -104,6 +103,83 @@ exports.getCategoryById = async (req, res, next) => {
     }
 };
 
+
+// exports.updateCategory = async (req, res, next) => {
+//     try {
+//         let category = await Category.findById(req.params.id);
+
+//         if (!category) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: 'Category not found',
+//             });
+//         }
+
+//         const { title, subtitle, images } = req.body;
+//         category.title = title || category.title;
+//         category.subtitle = subtitle || category.subtitle;
+//         category.images = images || category.images;
+
+//         await category.save();
+//         res.status(200).json({
+//             success: true,
+//             category,
+//         });
+//     } catch (error) {
+//         res.status(500).json({
+//             success: false,
+//             message: error.message,
+//         });
+//     }
+// };
+// exports.updateCategory = async (req, res, next) => {
+//     try {
+//         let category = await Category.findById(req.params.id);
+
+//         if (!category) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: 'Category not found',
+//             });
+//         }
+
+//         const { title, subtitle, images } = req.body;
+
+//         // Update title and subtitle only if provided in request body
+//         if (title) category.title = title;
+//         if (subtitle) category.subtitle = subtitle;
+
+//         // Log the incoming images for debugging
+//         console.log("Incoming images:", images);
+
+//         // If images are provided, validate each image has the required fields
+//         if (images && Array.isArray(images)) {
+//             for (let img of images) {
+//                 console.log("Validating image:", img); // Log each image for validation
+//                 if (!img.public_id || !img.url) {
+//                     return res.status(400).json({
+//                         success: false,
+//                         message: 'Each image must have both public_id and url.',
+//                     });
+//                 }
+//             }
+//             category.images = images; // Only set if all images are valid
+//         }
+
+//         // Save the updated category
+//         await category.save();
+
+//         res.status(200).json({
+//             success: true,
+//             category,
+//         });
+//     } catch (error) {
+//         res.status(500).json({
+//             success: false,
+//             message: error.message,
+//         });
+//     }
+// };
 exports.updateCategory = async (req, res, next) => {
     try {
         let category = await Category.findById(req.params.id);
