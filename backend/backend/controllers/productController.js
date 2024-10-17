@@ -283,7 +283,7 @@ const processImages = async (items) => {
 
 exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
     console.log("Received request to update product:", req.params.id);
-    
+
     let product = await Product.findById(req.params.id);
     if (!product) {
         return next(new ErrorHandler("Product Not Found", 404));
@@ -293,32 +293,32 @@ exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
     console.log("Incoming request body:", req.body);
 
     // Process images if provided
- if (req.body.images) {
-    try {
-        // First, check if req.body.images is a string and parse it, otherwise leave it as is
-        if (typeof req.body.images === 'string') {
-            req.body.images = JSON.parse(req.body.images);
-        }
+    if (req.body.images) {
+        try {
+            // First, check if req.body.images is a string and parse it, otherwise leave it as is
+            if (typeof req.body.images === 'string') {
+                req.body.images = JSON.parse(req.body.images);
+            }
 
-        // Check if the parsed object contains an 'images' key and if it's an array
-        if (req.body.images.images && Array.isArray(req.body.images.images)) {
-            req.body.images = req.body.images.images.map(image => {
-                return {
-                    url: image.url || '',  // Ensure the url is set or default to an empty string
-                    public_id: image.public_id || 'default_public_id', // Default to 'default_public_id' if not provided
-                     // Optional: keep label if needed
-                };
-            });
-        } else {
-            console.error("Images data is not an array:", req.body.images);
-            return next(new ErrorHandler("Images data is not an array", 400));
-        }
+            // Check if the parsed object contains an 'images' key and if it's an array
+            if (req.body.images.images && Array.isArray(req.body.images.images)) {
+                req.body.images = req.body.images.images.map(image => {
+                    return {
+                        url: image.url || '',  // Ensure the url is set or default to an empty string
+                        public_id: image.public_id || 'default_public_id', // Default to 'default_public_id' if not provided
+                        // Optional: keep label if needed
+                    };
+                });
+            } else {
+                console.error("Images data is not an array:", req.body.images);
+                return next(new ErrorHandler("Images data is not an array", 400));
+            }
 
-    } catch (error) {
-        console.error("Error parsing images:", error);
-        return next(new ErrorHandler("Invalid images data", 400));
+        } catch (error) {
+            console.error("Error parsing images:", error);
+            return next(new ErrorHandler("Invalid images data", 400));
+        }
     }
-}
     // Process highlights if provided
     if (req.body.highlights) {
         try {
@@ -341,7 +341,7 @@ exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
     }
 
     // Process specifications if provided
-   
+
     if (req.body.recipes) {
         console.log("Received recipes:", req.body.recipes);
         try {
@@ -365,18 +365,29 @@ exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
     }
 
 
-    // Process available weights if provided
     if (req.body.availableWeights) {
-        if (Array.isArray(req.body.availableWeights)) {
-            req.body.availableWeights = req.body.availableWeights.map(weight => {
-                return {
-                    weight: weight.weight || 0,
-                    unit: weight.unit || 'grams',
-                };
-            });
-        } else {
-            console.error("Available weights data is not an array:", req.body.availableWeights);
-            return next(new ErrorHandler("Available weights data is not an array", 400));
+        try {
+            // Check if availableWeights is a string (which happens when sent via FormData)
+            if (typeof req.body.availableWeights === 'string') {
+                // Parse the JSON string into an array
+                req.body.availableWeights = JSON.parse(req.body.availableWeights);
+            }
+
+            // Now, verify that availableWeights is indeed an array
+            if (Array.isArray(req.body.availableWeights)) {
+                req.body.availableWeights = req.body.availableWeights.map(weight => ({
+                    weight: weight.weight || 0,  // Default weight to 0 if not provided
+                    price: weight.price,         // Keep the price
+                }));
+            } else {
+                // If it's not an array, throw an error
+                console.error("Available weights data is not an array:", req.body.availableWeights);
+                return next(new ErrorHandler("Available weights data is not an array", 400));
+            }
+        } catch (error) {
+            // Handle JSON parsing error or any other issues
+            console.error("Error parsing availableWeights:", error.message);
+            return next(new ErrorHandler("Invalid format for available weights data", 400));
         }
     }
 
@@ -392,6 +403,7 @@ exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
         product,
     });
 });
+
 
 
 // Get Product Details with Recipes
