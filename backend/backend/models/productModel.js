@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema({
         },
     ],
        
- highlights: [
+    highlights: [
         {
             image: {
                 public_id: {
@@ -40,6 +40,10 @@ const productSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
+            highlightDesc: { // New field
+                type: String,
+                required: true, // You can change this to false if it's optional
+            }
         },
     ],
     
@@ -98,6 +102,12 @@ const productSchema = new mongoose.Schema({
             }
         }
     ],
+    recipesTitle:
+    {
+       type :  String ,
+       required :  true
+
+    },
     recipes: [
         {
         

@@ -148,29 +148,31 @@ exports.createProduct = async (req, res, next) => {
         req.body.recipes = req.body.recipes ?
             (Array.isArray(req.body.recipes) ? req.body.recipes : JSON.parse(req.body.recipes)) : [];
 
-        // Process highlights images
-        if (req.body.highlights.length) {
-            highlights = await Promise.all(req.body.highlights.map(async (highlight) => {
-                if (highlight.image && highlight.image.startsWith("data:image")) {
-                    const base64Data = highlight.image.split(',')[1];
-                    if (!base64Data) {
-                        throw new Error('Highlight image data is not in the correct format.');
-                    }
+        
+// Process highlights images
+if (req.body.highlights.length) {
+    highlights = await Promise.all(req.body.highlights.map(async (highlight) => {
+        if (highlight.image && highlight.image.startsWith("data:image")) {
+            const base64Data = highlight.image.split(',')[1];
+            if (!base64Data) {
+                throw new Error('Highlight image data is not in the correct format.');
+            }
 
-                    const buffer = Buffer.from(base64Data, 'base64');
-                    const uploadResult = await uploadImageToStorage(buffer);
-                    return {
-                        image: {
-                            public_id: uploadResult.public_id,
-                            url: uploadResult.url,
-                        },
-                        label: highlight.label,
-                    };
-                } else {
-                    throw new Error('Invalid Base64 highlight image format.');
-                }
-            }));
+            const buffer = Buffer.from(base64Data, 'base64');
+            const uploadResult = await uploadImageToStorage(buffer);
+            return {
+                image: {
+                    public_id: uploadResult.public_id,
+                    url: uploadResult.url,
+                },
+                label: highlight.label,
+                highlightDesc: highlight.highlightDesc, // Include the highlight description
+            };
+        } else {
+            throw new Error('Invalid Base64 highlight image format.');
         }
+    }));
+}
 
         // Process recipes images
         if (req.body.recipes.length) {
@@ -332,6 +334,7 @@ exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
                 return {
                     label: highlight.label || '', // Handle label
                     image: highlight.image || '', // Handle image
+                    highlightDesc : highlight.highlightDesc
                 };
             });
         } catch (error) {
