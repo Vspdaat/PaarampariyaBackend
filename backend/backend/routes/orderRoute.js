@@ -38,8 +38,8 @@ router.route('/order').post(isAuthenticatedUser, newOrder);
 router.route('/order/:id').get(isAuthenticatedUser, getSingleOrderDetails);
 
 router.route('/orders/me').get(isAuthenticatedUser, myOrders);
-
-router.route('/admin/orders').get(isAuthenticatedUser, authorizeRoles("admin"), getAllOrders);
+ 
+router.route('/admin/orders').get(getAllOrders);
 
 router.route('/admin/order/:id')
     .put(isAuthenticatedUser, authorizeRoles("admin"), updateOrder)
