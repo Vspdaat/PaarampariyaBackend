@@ -11,6 +11,11 @@ const productSchema = new mongoose.Schema({
         required: [true, "Please enter product description"]
     },
 
+    superDescription: {
+        type: String,
+        required: [false, "Please enter product super description"]
+    }, 
+
     availableWeights: [
         {
             weight: {
