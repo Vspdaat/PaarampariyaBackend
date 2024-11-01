@@ -147,11 +147,11 @@ exports.razorpayResponse = asyncErrorHandler(async (req, res, next) => {
                     </div>
                     <div class="order-items">
                         <p><strong>Order Items:</strong></p>
-                        ${orderItems.map(item => ` <p>Product: ${item.name}, Quantity: ${item.quantity}</p>`).join('')}
+                        ${orderItems.map(item => ` <p><strong>Product:</strong> ${item.name}, <strong>Quantity:</strong> ${item.quantity}</p>`).join('')}
                     </div>
                     <p class="total-price"><strong>Total Price:</strong> ₹${orderData.totalAmount.toFixed(2)}</p>
                     <div class="footer">
-                        <p>If you have any questions, please contact us at <a href="mailto:support@example.com">support@example.com</a>.</p>
+                        <p>If you have any questions, please contact us at <a href="mailto:paarampariyaa@gmail.com">paarampariyaa@gmail.com</a>.</p>
                         <p>Thank you for shopping with us!</p>
                     </div>
                 </div>
