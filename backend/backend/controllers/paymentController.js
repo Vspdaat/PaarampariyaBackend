@@ -41,6 +41,8 @@ exports.processPayment = asyncErrorHandler(async (req, res, next) => {
 exports.razorpayResponse = asyncErrorHandler(async (req, res, next) => {
     const { paymentId, orderId, signature, orderData, guestUser } = req.body;
 
+
+
     console.log("Received Razorpay response:", { paymentId, orderId, signature, guestUser });
     console.log("Order Data:", orderData);
 
@@ -67,7 +69,8 @@ exports.razorpayResponse = asyncErrorHandler(async (req, res, next) => {
             const orderItems = orderData.products.map(item => ({
                 product: item.productId,
                 quantity: item.quantity,
-                name: item.name
+                name: item.name,
+                weight: item.weight,
             }));
 
             // Add orderItems to orderData

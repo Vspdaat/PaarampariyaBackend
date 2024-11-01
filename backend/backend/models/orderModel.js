@@ -29,13 +29,17 @@ const orderSchema = new mongoose.Schema({
                 type: String,
                 required: false,
             },
+            weight: {
+                type: String,
+                required: false,
+            },
 
         }
     ],
     billingDetails: {
-        name: String,
+        firstname: String,
         email: String,
-        phoneNumber: Number,
+        phone: Number,
         address: String,
         city: String,
         zip: String,
@@ -45,13 +49,13 @@ const orderSchema = new mongoose.Schema({
         city: String,
         state:String ,
         country: String,
-        pincode: Number,
+        zip: Number,
         phoneNumber: Number
     },
 
     totalAmount: {
         type: Number,
-        required: true,
+        required: false,
     },
     createdAt: {
         type: Date,
@@ -59,7 +63,7 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        required: true,
+        required: false,
         default: "Processing",
     },
     deliveredAt: Date,
