@@ -10,10 +10,6 @@ const feedbackSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  phoneno: {
-    type: Number,
-    required: true
-  },
   message: {
     type: String,
     required: true
