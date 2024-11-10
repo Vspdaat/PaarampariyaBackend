@@ -13,7 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config({ path: 'backend/config/config.env' });
 }
 
-const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app'];
+const allowedOrigins = ['http://localhost:3000', 'https://paarampariya-1.web.app', 'https://paarampariyaadmin.web.app', 'https://paarampariyaa.com'];
 
 const corsChecker = function (origin, callback) {
   if (!origin || allowedOrigins.includes(origin)) {
