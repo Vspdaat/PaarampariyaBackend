@@ -76,6 +76,7 @@ exports.razorpayResponse = asyncErrorHandler(async (req, res, next) => {
             // Add orderItems to orderData
             const orderDetails = {
                 ...orderData,
+                guestUser: guestUser?.id,
                 orderItems: orderItems,
             };
 
