@@ -141,35 +141,46 @@ exports.getAllOrders = asyncErrorHandler(async (req, res, next) => {
 
 
 exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
+    console.log("Incoming request to update order:", req.params.id);
+    console.log("Requested status update:", req.body.status);
+
     const order = await Order.findById(req.params.id);
 
     if (!order) {
+        console.error("Order not found with ID:", req.params.id);
         return next(new ErrorHandler("Order Not Found", 404));
     }
 
-    if (order.orderStatus === "Delivered") {
-        return next(new ErrorHandler("Order already delivered", 400));
-    }
+    console.log("Current order status:", order.orderStatus);
 
+    // If status is being updated to "Shipped", update the shipment time and stock
     if (req.body.status === "Shipped") {
         order.shippedAt = Date.now();
-        // Loop through the products array instead of orderItems
+        console.log("Updating stock for shipped items...");
         order.products.forEach(async (item) => {
+            console.log(`Updating stock for product: ${item.productId}, Quantity: ${item.quantity}`);
             await updateStock(item.productId, item.quantity);
         });
     }
 
+    // Update the order status
     order.orderStatus = req.body.status;
+    console.log("Updated order status:", req.body.status);
+
+    // If status is being updated to "Delivered", update the delivery time
     if (req.body.status === "Delivered") {
         order.deliveredAt = Date.now();
+        console.log("Setting deliveredAt timestamp:", order.deliveredAt);
     }
 
     await order.save({ validateBeforeSave: false });
+    console.log("Order saved successfully.");
 
     res.status(200).json({
         success: true
     });
 });
+
 
 async function updateStock(id, quantity) {
     const product = await Product.findById(id);
